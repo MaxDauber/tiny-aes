@@ -2,21 +2,26 @@
 #define AES_MAIN
 
 #include "aes.h"
-#include <stdio.h>
+#include "stdio.h"
 #include <stdlib.h>
 
 int main(int argc, char *argv[]) {
-	FILE * stdin = fopen(argv[1], "r");
+    FILE *fptr = fopen("aes_sample.in","rb");
+    //create struct and read key
+    struct AES aes_struct;
+    fread(aes_struct.key, 4, 4, fptr);
 
-	unsigned char key_block[4][4];
-	fread(key_block, 4, 4, stdin);
-	while(!feof(stdin)) {
-		fread(key_block, 4, 4, stdin);
-		if(!feof(stdin)) {
-			printf("%s\n", &key_block);
-		}
-	}
-	return 0;
+    //read in next block (guaranteed n < 10^6)
+    while(!feof(stdin)) {
+        fread(aes_struct.state, 4, 4, fptr);
+
+        //encrypt block and output to stdout
+        if(!feof(stdin)) {
+            aes_encrypt(&aes_struct);
+            fwrite(aes_struct.state, 4, 4, stdout);
+        }
+    }
+    return 0;
 }
 
 #endif
