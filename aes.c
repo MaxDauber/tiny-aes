@@ -94,10 +94,67 @@ unsigned char gal3[256] =
                 0x3b, 0x38, 0x3d, 0x3e, 0x37, 0x34, 0x31, 0x32, 0x23, 0x20, 0x25, 0x26, 0x2f, 0x2c, 0x29, 0x2a,
                 0x0b, 0x08, 0x0d, 0x0e, 0x07, 0x04, 0x01, 0x02, 0x13, 0x10, 0x15, 0x16, 0x1f, 0x1c, 0x19, 0x1a
         };
-
+    /** Procedure: https://en.wikipedia.org/wiki/Advanced_Encryption_Standard
+     * 1. Key Expansion
+     * 2. Initial Round Key
+     *
+     * Repeat 3-6 9x for 128 bit keys (11x for 192 bits and 13x for 256 bits)
+     * 3. Substitute Bytes
+     * 4. Shift Rows
+     * 5. Mix Columns
+     * 6. Add Round Key
+     *
+     * Final Round
+     * 7. Substitute Bytes
+     * 8. Shift Rows
+     * 9. Add Round Key
+     */
 void aes_encrypt(struct AES * aes){
-    printf("encrypted");
+
+    //Initialization
+    key_expansion(aes);
+    initial_round_key(aes);
+
+    //9 intermediate rounds
+    for(int i = 1; i < 10; i++){
+        substitute_bytes(aes);
+        shift_rows(aes);
+        mix_columns(aes);
+        add_round_key(aes);
+    }
+
+    //Final Round
+    substitute_bytes(aes);
+    shift_rows(aes);
+    add_round_key(aes);
+
+    printf("encrypted 1 block\n");
 }
+
+void key_expansion(struct AES * aes){
+    printf("expanded key\n");
+}
+
+void initial_round_key(struct AES * aes){
+    printf("initial key added\n");
+}
+
+void substitute_bytes(struct AES * aes){
+    printf("substituted bytes\n");
+}
+
+void shift_rows(struct AES * aes){
+    printf("shifted rows\n");
+}
+
+void mix_columns(struct AES * aes){
+    printf("mixed columns\n");
+}
+
+void add_round_key(struct AES * aes){
+    printf("added round key\n");
+}
+
 
 void aes_decrypt(struct AES * aes){
     printf("decrypted");
