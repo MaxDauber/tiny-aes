@@ -74,14 +74,14 @@ void shift_rows(struct AES * aes){
     uint8_t temp;
 
     // Row 1 << 1 col
-    temp = aes[0][1];
+    temp = aes->state[0][1];
     aes->state[0][1] = aes->state[1][1];
     aes->state[1][1] = aes->state[2][1];
     aes->state[2][1] = aes->state[3][1];
     aes->state[3][1] = temp;
 
     // Row 2 << 2 col
-    temp = aes[0][2];
+    temp = aes->state[0][2];
     aes->state[0][2] = aes->state[2][2];
     aes->state[2][2] = temp;
     temp = aes->state[1][2];
@@ -89,7 +89,7 @@ void shift_rows(struct AES * aes){
     aes->state[3][2] = temp;
 
     // Row 3 << 3 col
-    temp = aes[0][3];
+    temp = aes->state[0][3];
     aes->state[0][3] = aes->state[3][3];
     aes->state[3][3] = aes->state[2][3];
     aes->state[2][3] = aes->state[1][3];
