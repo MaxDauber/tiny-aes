@@ -18,6 +18,8 @@
  * 7. Substitute Bytes
  * 8. Shift Rows
  * 9. Add Round Key
+ *
+ *
  */
 void aes_encrypt(struct AES * aes){
 
@@ -109,9 +111,24 @@ void shift_rows(struct AES * aes){
  * Source:
  * https://en.wikipedia.org/wiki/Rijndael_MixColumns
  *
+ * multiply each column by the transform matrix below in the AES galois field:
+ *
+ * [ 2 3 1 1 ]
+ * [ 1 2 3 1 ]
+ * [ 1 1 2 3 ]
+ * [ 3 1 1 2 ]
  *
  */
 void mix_columns(struct AES * aes){
+    byte out[4][4];
+    int i;
+    for(i=0; i<4; ++i){
+        out[i][0] = gal2[aes->state[i][0]] ^ gal3[aes->state[i][1]] ^ aes->state[i][2] ^ aes->state[i][3];
+        out[i][1] = aes->state[i][0] ^ gal2[aes->state[i][1]] ^ gal3[aes->state[i][2]] ^ aes->state[i][3];
+        out[i][2] = aes->state[i][0] ^ aes->state[i][1] ^ gal2[a[i][2]] ^ gal3[aes->state[i][3]];
+        out[i][3] = gal3[aes->state[i][0]] ^ aes->state[i][1] ^ aes->state[i][2] ^ gal2[aes->state[i][3]];
+    }
+    aes->state = out;
     printf("mixed columns\n");
 }
 
