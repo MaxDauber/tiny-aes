@@ -118,7 +118,7 @@ void aes_encrypt(struct AES * aes){
 
     //Initialization
     key_expansion(aes);
-    initial_round_key(aes);
+    add_round_key(aes, 0);
 
     //9 intermediate rounds
     for(int x = 1; x < 10; x++){
@@ -133,13 +133,9 @@ void aes_encrypt(struct AES * aes){
     shift_rows(aes);
     add_round_key(aes, 10);
 
-    printf("encrypted 1 block\n");
+    //printf("encrypted 1 block\n");
 }
 
-
-void initial_round_key(struct AES * aes){
-    printf("initial key added\n");
-}
 
 /**
  * Source:
@@ -154,7 +150,7 @@ void substitute_bytes(struct AES * aes){
             aes->state[x][y] = sbox[aes->state[x][y]];
         }
     }
-    printf("substituted bytes\n");
+    //printf("substituted bytes\n");
 }
 
 /**
@@ -197,7 +193,7 @@ void shift_rows(struct AES * aes){
 //        }
 //    }
 
-    printf("shifted rows\n");
+    //printf("shifted rows\n");
 }
 
 /**
@@ -229,7 +225,7 @@ void mix_columns(struct AES * aes){
 
     }
     memcpy(aes->state, temp_state, 16);
-    printf("mixed columns\n");
+    //printf("mixed columns\n");
 }
 /**
  * Source:
@@ -243,7 +239,7 @@ void add_round_key(struct AES * aes, int round_number){
             aes->state[x][y] ^= aes->expanded_key[(round_number << 2) + x][y];
         }
     }
-    printf("added round key\n");
+    //printf("added round key\n");
 }
 
 /** Expand key to 128 bits using Rijndael's key schedule
@@ -308,7 +304,7 @@ void key_schedule(byte row[4], int iter){
     //XOR with rcon value
     row[0] = row[0] ^ rcon[iter];
 
-    printf("expanded key\n");
+    //printf("expanded key\n");
 }
 
 void aes_decrypt(struct AES * aes){
