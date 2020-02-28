@@ -115,7 +115,7 @@ unsigned char rcon[256] =
  * 9. Add Round Key
  */
 void aes_encrypt(struct AES * aes){
-
+    
     //Initialization
     key_expansion(aes);
     add_round_key(aes, 0);
@@ -253,25 +253,33 @@ void key_expansion(struct AES * aes) {
 
     int iter = 1;
 
+    for (int i = 0; i < 44; ++i)
+    {
+        for (int j = 0; j <4; ++j)
+        {
+            aes->expanded_key[i][j]=0x00;
+        }
+    }
+
     // first 4 bytes of expanded key are first 4 bytes of key
     memcpy(aes->expanded_key, aes->key, 16);
 
     //need to fill remaining 40
-    for (int r = 4; r < 44; r++) {
+    for (int row = 4; row < 44; row++) {
 
-        byte tmp[4];
+        byte temp[4];
 
         // copy previous 4 bytes of expanded_key to temp
-        memcpy(tmp, aes->expanded_key[r - 1], 4);
+        memcpy(temp, aes->expanded_key[row - 1], 4);
 
         // Apply key schedule for every 16 bytes
-        if (r % 4 == 0) {
-            key_schedule(tmp, iter++);
+        if (row % 4 == 0) {
+            key_schedule(temp, iter++);
         }
 
         // XOR with 4 byte block
-        for (int c = 0; c < 4; c++) {
-            aes->expanded_key[r][c] = aes->expanded_key[r - 4][c] ^ tmp[c];
+        for (int col = 0; col < 4; col++) {
+            aes->expanded_key[row][col] = aes->expanded_key[row - 4][col] ^ temp[col];
         }
 
     }
@@ -280,9 +288,7 @@ void key_expansion(struct AES * aes) {
 /**
   * Implementation of Rijndael key schedule.
   * http://en.wikipedia.org/wiki/Rijndael_key_schedule
-  *
   * http://en.wikipedia.org/wiki/Rijndael_S-box
-  * The Rijndael key schedule uses the Rijndael substitution box.
   *
   * http://en.wikipedia.org/wiki/Rijndael_key_schedule#Rcon
   * Rcon is the exponentiation of 2 to a specific value which is performed in Rijndael's finite field, GF(2^8).
@@ -292,20 +298,19 @@ void key_schedule(byte row[4], int iter){
 
     //rotates a 32-bit word by 8 bits
     byte temp = row[0];
-    for(int x = 1; x < 4; x++){
-        row[x-1] = row[x];
-    }
+    row[0] = row[1];
+    row[1] = row[2];
+    row[2] = row[3];
     row[3] = temp;
 
     //perform sbox transformation
-    for(int y = 0; y < 4; y++) {
-        row[y] = sbox[row[y]];
-    }
+    row[0] = sbox[row[0]];
+    row[1] = sbox[row[1]];
+    row[2] = sbox[row[2]];
+    row[3] = sbox[row[3]];
 
     //XOR with rcon value
     row[0] = row[0] ^ rcon[iter];
-
-    //printf("expanded key\n");
 }
 
 void aes_decrypt(struct AES * aes){

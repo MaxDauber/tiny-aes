@@ -3,13 +3,14 @@
 
 #include "string.h"
 
+typedef unsigned char byte;
+
 struct AES {
     unsigned char key[4][4];
     unsigned char expanded_key[44][4];
     unsigned char state[4][4];
 };
 
-typedef unsigned char byte;
 
 void aes_encrypt(struct AES * aes);
 void aes_decrypt(struct AES * aes);
