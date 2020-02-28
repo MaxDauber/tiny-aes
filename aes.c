@@ -197,8 +197,9 @@ void shift_rows(struct AES * aes){
 }
 
 /**
- * Source:
+ * Sources:
  * https://en.wikipedia.org/wiki/Rijndael_MixColumns
+ * https://www.youtube.com/watch?v=gP4PqVGudtg
  *
  * Multiply each column by the transform matrix below in the Rijndael galois field:
  *
@@ -252,7 +253,7 @@ void key_expansion(struct AES * aes) {
 
     int iter = 1;
 
-    // first 4 bytes of expanded key are
+    // first 4 bytes of expanded key are first 4 bytes of key
     memcpy(aes->expanded_key, aes->key, 16);
 
     //need to fill remaining 40
@@ -263,12 +264,12 @@ void key_expansion(struct AES * aes) {
         // copy previous 4 bytes of expanded_key to temp
         memcpy(tmp, aes->expanded_key[r - 1], 4);
 
-        // Apply core for every 16 bytes
+        // Apply key schedule for every 16 bytes
         if (r % 4 == 0) {
             key_schedule(tmp, iter++);
         }
 
-        // XOR with the 4-byte block 16 bytes before current index
+        // XOR with 4 byte block
         for (int c = 0; c < 4; c++) {
             aes->expanded_key[r][c] = aes->expanded_key[r - 4][c] ^ tmp[c];
         }

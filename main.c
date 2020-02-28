@@ -24,6 +24,7 @@ int main(int argc, char *argv[]) {
             fwrite(aes_struct.state, 4, 4, stdout);
         }
     }
+
     return 0;
 
 }
