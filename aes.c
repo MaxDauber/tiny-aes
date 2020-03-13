@@ -115,7 +115,7 @@ unsigned char rcon[256] =
  * 9. Add Round Key
  */
 void aes_encrypt(struct AES * aes){
-    
+
     //Initialization
     key_expansion(aes);
     add_round_key(aes, 0);
@@ -247,16 +247,16 @@ void add_round_key(struct AES * aes, int round_number){
  * https://en.wikipedia.org/wiki/AES_key_schedule
  *
  * Also very helpful:
+ * https://nvlpubs.nist.gov/nistpubs/FIPS/NIST.FIPS.197.pdf
  * https://engineering.purdue.edu/kak/compsec/NewLectures/Lecture8.pdf
+ *
  */
 void key_expansion(struct AES * aes) {
 
     int iter = 1;
 
-    for (int i = 0; i < 44; ++i)
-    {
-        for (int j = 0; j <4; ++j)
-        {
+    for (int i = 0; i < 44; i++){
+        for (int j = 0; j <4; j++){
             aes->expanded_key[i][j]=0x00;
         }
     }
@@ -314,5 +314,19 @@ void key_schedule(byte row[4], int iter){
 }
 
 void aes_decrypt(struct AES * aes){
+    add_round_key(aes, 0);
+
+    //9 intermediate rounds
+    for(int x = 1; x < 10; x++){
+        substitute_bytes(aes);
+        shift_rows(aes);
+        mix_columns(aes);
+        add_round_key(aes, x);
+    }
+
+    //Final Round
+    substitute_bytes(aes);
+    shift_rows(aes);
+    add_round_key(aes, 10);
     printf("decrypted");
 }
